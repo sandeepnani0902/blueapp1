@@ -4,36 +4,37 @@ import './App.css'
 function App() {
   const [seats, setSeats] = useState([])
   const [toast, setToast] = useState('')
-
-  useEffect(() => {
-    fetch('http://localhost:3300/api/seats')
-      .then(res => res.json())
-      .then(data => {
-        console.log('Seats:', data)
-        setSeats(data)
-      })
-      .catch(err => console.log('Error:', err))
-  }, [])
-
-  const bookSeat = (seatNumber) => {
-    fetch('http://localhost:3300/api/book', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ seatNumber })
-    })
+useEffect(() => {
+  fetch('https://blueapp1server.onrender.com/api/seats')
     .then(res => res.json())
     .then(data => {
-      setToast(`${seatNumber} booked successfully!`)
-      setTimeout(() => setToast(''), 3000)
-      fetch('http://localhost:3300/api/seats')
-        .then(res => res.json())
-        .then(data => setSeats(data))
+      console.log('Seats:', data)
+      setSeats(data)
     })
-    .catch(() => {
-      setToast('Error booking seat')
-      setTimeout(() => setToast(''), 3000)
-    })
-  }
+    .catch(err => console.log('Error:', err))
+}, [])
+
+const bookSeat = (seatNumber) => {
+  fetch('https://blueapp1server.onrender.com/api/book', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ seatNumber })
+  })
+  .then(res => res.json())
+  .then(data => {
+    setToast(`${seatNumber} booked successfully!`)
+    setTimeout(() => setToast(''), 3000)
+
+    fetch('https://blueapp1server.onrender.com/api/seats')
+      .then(res => res.json())
+      .then(data => setSeats(data))
+  })
+  .catch(() => {
+    setToast('Error booking seat')
+    setTimeout(() => setToast(''), 3000)
+  })
+}
+
 
   const availableCount = seats.filter(s => !s.isBooked).length
   const bookedCount = seats.filter(s => s.isBooked).length
